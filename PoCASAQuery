@@ -1,0 +1,13 @@
+ SELECT package.[key]."track-id" as tracking_id,
+    package.[key]."carrier" as package_carrier,
+    event.ArrayValue.code as event_code,
+    event.ArrayValue."create-time" as event_createtime,
+    event.ArrayValue.carrier as event_carrier,
+    event.ArrayValue.location.address.city as event_city,
+    event.ArrayValue.location.address."state-province" as event_state_province,
+    event.ArrayValue.location.address.country as event_country,
+    event.ArrayValue.location.address.postal as event_postal,
+    concat(package.[key]."track-id",event.ArrayValue.code) as trackingideventcode
+    INTO [output-to-cosmosdb]
+    FROM [eventhub-stream-input-kshitiz] as package
+    CROSS APPLY GetArrayElements(events.event) AS event
